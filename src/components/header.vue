@@ -1,12 +1,12 @@
 <template>
   <div class="head">
-    <div id="logo">
+    <div class="logo">
       <a href="javascript:;">
         <img src="../assets/微云.png">
         <span>微云</span>
       </a>
     </div>
-    <div id="user">
+    <div class="user">
       <Dropdown style="margin-left: 20px;" placement="bottom-end">
         <a href="javascript:void(0)">
           <span style="color: rgb(0, 0, 0); margin: 0px 10px; font-size: 14px">summer</span>
@@ -34,7 +34,7 @@
 import { Dropdown, DropdownMenu, DropdownItem, Icon } from 'iview'
 
 export default {
-  name: 'header',
+  name: 'navBar',
   components: {
     Dropdown,
     DropdownMenu,
@@ -50,30 +50,30 @@ export default {
   height: 64px;
   background-color: #F5F5F5;
 }
-#logo {
+.logo {
   width: 150px;
   height: 100%;
   margin-left: 50px;
   float: left;
 }
-#logo a {
+.logo a {
   font-size: 20px;
   font-weight: bold;
   color: #000;
   line-height: 60px;
 }
-#logo a img {
+.logo a img {
   width: 60px;
   height: 60px;
   margin: 0 10px 0 5px;
 }
 
-#logo a span {
+.logo a span {
   vertical-align: top;
 }
-#user {
+.user {
   float: right;
-  margin: 0 50px;
+  margin: 20px 50px;
 }
 .head .list-item {
   /* text-align: left; */

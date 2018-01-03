@@ -11,6 +11,7 @@
   "plugins": [
     "transform-vue-jsx",
     "transform-runtime",
+    "transform-async-to-generator",
     ["import", {
       "libraryName": "iview",
       "libraryDirectory": "src/components"

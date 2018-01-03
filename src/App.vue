@@ -1,7 +1,7 @@
 <template>
   <div id="app" class="layout">
     <div>
-      <Header class="header"><Head/></Header>
+      <div class="header"><Htag/></div>
       <div class="content">
         <div style="display: flex;width: 100%;justify-content: space-between;">
           <div>
@@ -11,7 +11,7 @@
             <tool-bar/>
             <div class="checkAll">
               <Checkbox size="large">全选</Checkbox>
-              <span>已选中0个文件/文件夹</span>
+              <span>已选中{{checkedLen}}个文件/文件夹</span>
             </div>
             <Container/>
           </div>
@@ -25,7 +25,7 @@
 import ToolBar from './components/toolBar'
 import SideBar from './components/sideBar'
 import Container from './components/container'
-import Head from './components/header'
+import Htag from './components/header'
 import { Layout, Header, Row, Checkbox } from 'iview'
 
 export default {
@@ -36,10 +36,19 @@ export default {
     ToolBar,
     SideBar,
     Container,
-    Head,
+    Htag,
     Row,
     Checkbox
+  },
+  computed: {
+    checkedLen () {
+      return this.$store.state.checkedBuffer.length
+    }
   }
+  // ,
+  // created () {  // 发送ajax请求
+  //   this.$store.dispatch('getDataAction')
+  // }
 }
 </script>
 

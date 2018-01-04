@@ -8,26 +8,35 @@
       </Breadcrumb>
     </div>
     <div class="btn-list">
-      <ButtonGroup size="large" style="margin-right: 20px" >
-        <Button><img src="../assets/list.png" class="btn-img" /></Button>
-        <Button type="ghost"><img src="../assets/big.png" class="btn-img" /></Button>
-      </ButtonGroup>
-      <ButtonGroup size="large" style="margin-right: 20px" >
-        <Button><img src="../assets/sort.png" class="btn-img" /></Button>
-        <Button type="ghost"><img src="../assets/time.png" class="btn-img" /></Button>
-      </ButtonGroup>
+      <div v-if="checkedBufferLen === 0">
+        <ButtonGroup size="large" class="btn-grounp" >
+          <Button type="ghost" @click="changeViewTo('list')" :class="currentView === 'list'? 'btn-active': ''">
+            <img src="../assets/list.png" class="btn-img" />
+          </Button>
+          <Button type="ghost" @click="changeViewTo('thumbnail')" :class="currentView === 'thumbnail'? 'btn-active': ''">
+            <img src="../assets/big.png" class="btn-img" />
+          </Button>
+        </ButtonGroup>
+        <ButtonGroup size="large" class="btn-grounp" >
+          <Button type="ghost" @click="changeRankTo('name')" :class="currentRank === 'name'? 'btn-active': ''">
+            <img src="../assets/sort.png" class="btn-img" />
+          </Button>
+          <Button type="ghost" @click="changeRankTo('time')" :class="currentRank === 'time'? 'btn-active': ''">
+            <img src="../assets/time.png" class="btn-img" />
+          </Button>
+        </ButtonGroup>
+      </div>
+      <div v-else>
+        <ButtonGroup size="large" class="btn-grounp" >
+          <Button type="ghost">删除</Button>
+          <Button type="ghost">重命名</Button>
+          <Button type="ghost">移动到</Button>
+          <Button type="ghost" disabled>下载</Button>
+          <Button type="ghost" disabled>分享</Button>
+        </ButtonGroup>
+      </div>
       <Button class="new-btn" type="primary" icon="plus-round" size="large">新建文件夹</Button>
     </div>
-
-    <!-- <Col span="7">
-      <ButtonGroup size="large">
-        <Button type="ghost">删除</Button>
-        <Button type="ghost">重命名</Button>
-        <Button type="ghost">移动到</Button>
-        <Button type="ghost" disabled>下载</Button>
-        <Button type="ghost" disabled>分享</Button>
-      </ButtonGroup>
-    </Col> -->
 
   </div>
 </template>
@@ -44,10 +53,31 @@ export default {
     Breadcrumb,
     BreadcrumbItem
   },
+  data () {
+    return {
+      active: false
+    }
+  },
   computed: {
     parentList () {
-      console.log(this.$store.getters.breakcrumb)
       return this.$store.getters.breakcrumb
+    },
+    currentView () {
+      return this.$store.state.view
+    },
+    currentRank () {
+      return this.$store.state.rank
+    },
+    checkedBufferLen () {
+      return this.$store.state.checkedBuffer.length
+    }
+  },
+  methods: {
+    changeViewTo (view) {
+      this.$store.commit('changeView', {view})
+    },
+    changeRankTo (rank) {
+      this.$store.commit('changeRank', {rank})
     }
   }
 }
@@ -72,8 +102,16 @@ export default {
   justify-content: flex-end;
   padding: 13px 45px 14px 0;
 }
+.btn-grounp {
+  margin-right: 20px;
+  vertical-align: top;
+}
 .btn-img {
   width: 16px;
   margin-bottom: -2px;
+}
+.btn-active {
+  background-color: #E6E7EC;
+  pointer-events: none;
 }
 </style>

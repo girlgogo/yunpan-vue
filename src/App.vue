@@ -10,7 +10,7 @@
           <div style="flex: 1;background: #fff;">
             <tool-bar/>
             <div class="checkAll">
-              <Checkbox size="large">全选</Checkbox>
+              <Checkbox size="large" :value="checkedLen === listLen? true: false" @on-change="checkAllHandle">全选</Checkbox>
               <span>已选中{{checkedLen}}个文件/文件夹</span>
             </div>
             <Container/>
@@ -43,6 +43,14 @@ export default {
   computed: {
     checkedLen () {
       return this.$store.state.checkedBuffer.length
+    },
+    listLen () {
+      return this.$store.getters.currentListBufferR.length
+    }
+  },
+  methods: {
+    checkAllHandle () {
+      this.$store.commit('changeCheckedAll')
     }
   }
   // ,

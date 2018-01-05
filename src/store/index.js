@@ -12,7 +12,8 @@ let data = {
     name: '全部',
     size: '2G',
     type: 'folder',
-    checked: false
+    checked: false,
+    edit: false
   },
   '1': {
     id: 1,
@@ -21,7 +22,8 @@ let data = {
     name: '音乐',
     size: '60M',
     type: 'folder_m',
-    checked: false
+    checked: false,
+    edit: false
   },
   '2': {
     id: 2,
@@ -30,7 +32,8 @@ let data = {
     name: '电影',
     size: '100M',
     type: 'folder_f',
-    checked: false
+    checked: false,
+    edit: false
   },
   '3': {
     id: 3,
@@ -39,7 +42,8 @@ let data = {
     name: '图库',
     size: '40M',
     type: 'folder',
-    checked: false
+    checked: false,
+    edit: false
   },
   '4': {
     id: 4,
@@ -48,7 +52,8 @@ let data = {
     name: '儿歌',
     size: '40M',
     type: 'folder_m',
-    checked: false
+    checked: false,
+    edit: false
   },
   '5': {
     id: 5,
@@ -57,7 +62,8 @@ let data = {
     name: '轻音乐',
     size: '20M',
     type: 'folder_m',
-    checked: false
+    checked: false,
+    edit: false
   },
   '6': {
     id: 6,
@@ -66,7 +72,8 @@ let data = {
     name: '我的照片',
     size: '30M',
     type: 'folder',
-    checked: false
+    checked: false,
+    edit: false
   },
   '7': {
     id: 7,
@@ -75,7 +82,8 @@ let data = {
     name: '我的童年',
     size: '10M',
     type: 'folder',
-    checked: false
+    checked: false,
+    edit: false
   },
   '8': {
     id: 8,
@@ -84,7 +92,8 @@ let data = {
     name: '1.png',
     size: '400k',
     type: 'image',
-    checked: false
+    checked: false,
+    edit: false
   },
   '9': {
     id: 9,
@@ -93,7 +102,8 @@ let data = {
     name: '2.png',
     size: '3M',
     type: 'image',
-    checked: false
+    checked: false,
+    edit: false
   },
   '10': {
     id: 10,
@@ -102,7 +112,8 @@ let data = {
     name: '3.png',
     size: '1018K',
     type: 'image',
-    checked: false
+    checked: false,
+    edit: false
   },
   '11': {
     id: 11,
@@ -111,7 +122,8 @@ let data = {
     name: "I'm A Little Teapot.mp3",
     size: '5.4M',
     type: 'music',
-    checked: false
+    checked: false,
+    edit: false
   },
   '12': {
     id: 12,
@@ -120,7 +132,8 @@ let data = {
     name: '小星星.mp3',
     size: '6.75M',
     type: 'music',
-    checked: false
+    checked: false,
+    edit: false
   },
   '13': {
     id: 13,
@@ -129,7 +142,8 @@ let data = {
     name: 'Week.mp3',
     size: '8.45M',
     type: 'music',
-    checked: false
+    checked: false,
+    edit: false
   },
   '14': {
     id: 14,
@@ -138,7 +152,8 @@ let data = {
     name: 'Vow to Virtue.mp3',
     size: '6.78M',
     type: 'music',
-    checked: false
+    checked: false,
+    edit: false
   },
   '15': {
     id: 15,
@@ -147,7 +162,8 @@ let data = {
     name: 'My Movie',
     size: '60M',
     type: 'folder_f',
-    checked: false
+    checked: false,
+    edit: false
   },
   '16': {
     id: 16,
@@ -156,7 +172,8 @@ let data = {
     name: '我的应用',
     size: '20M',
     type: 'zip',
-    checked: false
+    checked: false,
+    edit: false
   },
   '17': {
     id: 17,
@@ -165,7 +182,8 @@ let data = {
     name: '备忘录',
     size: '10M',
     type: 'folder',
-    checked: false
+    checked: false,
+    edit: false
   }
 }
 
@@ -215,61 +233,22 @@ function toArr (str) {
   return data
 }
 
+// 判断名字是否可用
+function nameCanUse (db, id, text) {
+  const currentData = getChildrenById(db, id)
+  return currentData.every(item => item.name !== text)
+}
+
 let store = new Vuex.Store({
   state: {
     data: data,
     currentListId: 0, // 当前文件的id
     checkedBuffer: {length: 0}, // 当前选中的文件，以及选中的个数
-    currentListBuffer: [
-      {
-        id: 1,
-        pId: 0,
-        time: '2017-10-10 14:04:01',
-        name: '音乐',
-        size: '60M',
-        type: 'folder_m',
-        checked: false
-      },
-      {
-        id: 2,
-        pId: 0,
-        time: '2017-10-10 13:04:05',
-        name: '电影',
-        size: '100M',
-        type: 'folder_f',
-        checked: false
-      },
-      {
-        id: 3,
-        pId: 0,
-        time: '2017-10-10 13:04:03',
-        name: '图库',
-        size: '40M',
-        type: 'folder',
-        checked: false
-      },
-      {
-        id: 16,
-        pId: 0,
-        time: '2017-11-10 10:20:00',
-        name: '我的应用',
-        size: '20M',
-        type: 'zip',
-        checked: false
-      },
-      {
-        id: 17,
-        pId: 0,
-        time: '2017-11-10 10:40:00',
-        name: '备忘录',
-        size: '10M',
-        type: 'folder',
-        checked: false
-      }
-    ],
+    currentListBuffer: [],
     moveTargetId: 0,
     view: 'thumbnail',
-    rank: 'name'
+    rank: 'name',
+    checkAll: false
   },
   getters: {
     breakcrumb (state) {
@@ -321,15 +300,22 @@ let store = new Vuex.Store({
         }
         return item
       })
+      if (state.checkedBuffer.length === state.currentListBuffer.length) {
+        state.checkAll = true
+      } else {
+        state.checkAll = false
+      }
     },
     changeCheckedAll (state) {
-      if (state.checkedBuffer.length !== 0) {
+      if (state.checkAll) {
+        state.checkAll = false
         state.checkedBuffer = {length: 0}
         state.currentListBuffer = state.currentListBuffer.map((item) => {
           item.checked = false
           return item
         })
       } else {
+        state.checkAll = true
         state.checkedBuffer = {length: 0}
         state.currentListBuffer = state.currentListBuffer.map((item) => {
           item.checked = true
@@ -337,6 +323,21 @@ let store = new Vuex.Store({
           state.checkedBuffer.length++
           return item
         })
+      }
+    },
+    changeEdit (state, payload) {
+      state.currentListBuffer = state.currentListBuffer.map((item) => {
+        if (item.id === payload.id * 1) {
+          console.log(payload.id)
+          item.edit = !item.edit
+        }
+        return item
+      })
+    },
+    changeName (state, payload) {
+      console.log(payload)
+      if (nameCanUse(state.data, payload.id, payload.newName)) {
+        state.data[payload.id].name = payload.newName
       }
     }
   }

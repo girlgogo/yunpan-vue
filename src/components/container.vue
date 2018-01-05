@@ -12,8 +12,17 @@
             <img src="../assets/image.png" class="big-image" v-else-if="item.type === 'image'">
             <img src="../assets/music.png" class="big-image" v-else-if="item.type === 'music'">
           </div>
-          <span class="folder-name" style="text-overflow: ellipsis;overflow: hidden;white-space: nowrap;">{{item.name}}</span>
-          <input type="text" class="folder-name-edit" value="">
+          <span class="folder-name" v-if="!item.edit">{{item.name}}</span>
+          <input
+            @blur="editDoneBlur(item.id)"
+            @keydown.13="editDoneEnter"
+            @keydown.esc="cancelEdit"
+            type="text"
+            ref="editInput"
+            v-if="item.edit"
+            class="folder-name-edit"
+            v-model.trim="newName"
+          >
         </div>
       </li>
     </ul>
@@ -29,9 +38,9 @@
         </tr>
       </thead>
       <tbody id="listInfo">
-        <tr v-for="item in list" :key="item.id">
+        <tr v-for="item in list" :key="item.id" :class="{'checked': item.checked}">
           <td>
-            <Checkbox size="large" class="checkbox"></Checkbox>
+            <Checkbox size="large" class="checkbox" :value="item.checked" @on-change="checkHandle(item.id)"></Checkbox>
           </td>
           <td>
             <div class="file-icon" @click="into(item.id)">
@@ -43,8 +52,17 @@
               <img src="../assets/music.png" class="t-big-image" v-else-if="item.type === 'music'">
             </div>
             <div class="file-name">
-              <span class="name-text show" :value="item.name">{{item.name}}</span>
-              <input class="name-input" type="text" value="">
+              <span class="name-text" v-if="!item.edit" :value="item.name">{{item.name}}</span>
+              <input
+                @blur="editDoneBlur(item.id)"
+                @keydown.13="editDoneEnter"
+                @keydown.esc="cancelEdit"
+                class="name-input"
+                ref="editInput"
+                v-if="item.edit"
+                type="text"
+                v-model.trim="newName"
+              >
             </div>
           </td>
           <td>{{item.time}}</td>
@@ -56,13 +74,22 @@
 </template>
 
 <script>
-import { Checkbox, Col } from 'iview'
+import { Checkbox, Col, Message } from 'iview'
+import eventBus from './eventBus.js'
 
 export default {
   name: 'container',
   components: {
     Checkbox,
-    Col
+    Col,
+    Message
+  },
+  data () {
+    return {
+      newName: '',
+      oldName: '',
+      cancelRename: false
+    }
   },
   computed: {
     list () {
@@ -73,6 +100,9 @@ export default {
     },
     currentRank () {
       return this.$store.state.rank
+    },
+    checkedBuffer () {
+      return this.$store.state.checkedBuffer
     }
   },
   methods: {
@@ -82,7 +112,63 @@ export default {
     },
     checkHandle (id) {
       this.$store.commit('changeChecked', {id})
+    },
+    editDoneBlur (id) {
+      console.log(this.newName)
+      if (this.cancelRename) {
+        return this.$store.commit('changeEdit', {id})
+      }
+      if (!this.newName) {
+        this.$refs.editInput[0].select()
+        return Message.error('文件(夹)名不能为空，请输入文件名称')
+      }
+      if (this.newName === this.oldName) {
+        // if(this.newName === '新建文件夹'){
+        //   if(nameCanUse(db, yp.currentListId, newName)){
+        //     dblSetCls(nameText, nameInput, 'show')
+        //     this.onblur = null
+        //     canUseAllBtns(false)
+        //     successFn&&successFn(newName)
+        //     return
+        //   } else {
+        //     this.select()
+        //     return alertMessage('命名冲突', 'error')
+        //   }
+        // }
+        console.log('changeEdit 1')
+        return this.$store.commit('changeEdit', {id})
+      }
+      this.$store.commit('changeName', {id, newName: this.newName})
+      this.$store.commit('changeEdit', {id})
+    },
+    editDoneEnter () {
+      this.$refs.editInput[0].blur()
+    },
+    cancelEdit () {
+      this.cancelRename = true
+      this.$refs.editInput[0].blur()
     }
+  },
+  mounted () {
+    eventBus.$on('rename', (e) => {
+      if (this.checkedBuffer.length === 0) {
+        return Message.error('请选中一个文件进行编辑！')
+      }
+      if (this.checkedBuffer.length > 1) {
+        return Message.error('只能选中一个文件进行编辑！')
+      }
+      let id = Object.keys(this.checkedBuffer).map(item => {
+        if (item !== 'length') {
+          return item
+        }
+      })[0]
+      this.newName = this.oldName = this.checkedBuffer[id].name
+      this.cancelRename = false
+      this.$store.commit('changeEdit', {id})
+      this.$nextTick(function () { // input要获取焦点等到DOM渲染完成触发回调函数
+        this.$refs.editInput[0].focus()
+      })
+    })
   }
 }
 </script>
@@ -122,8 +208,18 @@ export default {
     flex-direction: column;
     justify-content: center;
   }
+  #thumbnail .folder-name {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
   .folder-name-edit {
-    display: none;
+    width: 100%;
+    margin: 0 auto;
+    text-align: center;
+    height: 30px;
+    border: 1px solid #C8CCD3;
+    background: #fff;
   }
   .big-image {
     width: 60px;
@@ -132,13 +228,12 @@ export default {
     width: 50px;
     margin: 5px;
   }
-  .checkbox {
+  #thumbnail .checkbox {
     visibility: hidden;
     align-self: flex-start
   }
   #list {
     width: 100%;
-    /* margin: 5px 5px 5px 20px; */
     border-collapse: collapse;
   }
   #list thead {
@@ -158,13 +253,6 @@ export default {
   #list thead tr th:hover {
     background-color: #E6E7EC;
   }
-  /* #list .icon-arrow-down {
-    display: inline-block;
-    width: 14px;
-    height: 14px;
-    background: url(../image/向下.png);
-    background-size: 14px 14px;
-  } */
   #list tbody tr.checked {
     background-color: #E6E7EC;
   }
@@ -211,26 +299,20 @@ export default {
     display: inline-block;
   }
   #list .name-text {
-    display: none;
     text-align: center;
     text-overflow: ellipsis;
-    /* overflow: hidden; */
     white-space: nowrap;
     margin: 0 auto;
     max-width: 70%;
     height: 40px;
   }
   #list .name-input {
-    display: none;
     width: 100%;
     margin: 0 auto;
     text-align: center;
-    height: 40px;
+    height: 30px;
     border: 1px solid #C8CCD3;
     background: #fff;
-  }
-  #list .name-text.show,
-  #list .name-input.show {
-    display: block;
+    vertical-align: text-bottom;
   }
 </style>

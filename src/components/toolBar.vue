@@ -8,31 +8,31 @@
       </Breadcrumb>
     </div>
     <div class="btn-list">
-      <div v-if="checkedBufferLen === 0">
+      <div v-if="checkedBuffer.length === 0">
         <ButtonGroup size="large" class="btn-grounp" >
-          <Button type="ghost" @click="changeViewTo('list')" :class="currentView === 'list'? 'btn-active': ''">
+          <Button type="ghost" @click="changeViewTo('list')" :class="currentView === 'list'? 'btn-active': ''" key="list">
             <img src="../assets/list.png" class="btn-img" />
           </Button>
-          <Button type="ghost" @click="changeViewTo('thumbnail')" :class="currentView === 'thumbnail'? 'btn-active': ''">
+          <Button type="ghost" @click="changeViewTo('thumbnail')" :class="currentView === 'thumbnail'? 'btn-active': ''" key="thumbnail">
             <img src="../assets/big.png" class="btn-img" />
           </Button>
         </ButtonGroup>
         <ButtonGroup size="large" class="btn-grounp" >
-          <Button type="ghost" @click="changeRankTo('name')" :class="currentRank === 'name'? 'btn-active': ''">
+          <Button type="ghost" @click="changeRankTo('name')" :class="currentRank === 'name'? 'btn-active': ''" key="name">
             <img src="../assets/sort.png" class="btn-img" />
           </Button>
-          <Button type="ghost" @click="changeRankTo('time')" :class="currentRank === 'time'? 'btn-active': ''">
+          <Button type="ghost" @click="changeRankTo('time')" :class="currentRank === 'time'? 'btn-active': ''" key="time">
             <img src="../assets/time.png" class="btn-img" />
           </Button>
         </ButtonGroup>
       </div>
       <div v-else>
         <ButtonGroup size="large" class="btn-grounp" >
-          <Button type="ghost">删除</Button>
-          <Button type="ghost">重命名</Button>
-          <Button type="ghost">移动到</Button>
-          <Button type="ghost" disabled>下载</Button>
-          <Button type="ghost" disabled>分享</Button>
+          <Button type="ghost" key="delete">删除</Button>
+          <Button type="ghost" key="rename" @click="renameStart">重命名</Button>
+          <Button type="ghost" key="moveTo">移动到</Button>
+          <Button type="ghost" key="download" disabled>下载</Button>
+          <Button type="ghost" key="share" disabled>分享</Button>
         </ButtonGroup>
       </div>
       <Button class="new-btn" type="primary" icon="plus-round" size="large">新建文件夹</Button>
@@ -43,6 +43,7 @@
 
 <script>
 import { Col, Button, ButtonGroup, Breadcrumb, BreadcrumbItem } from 'iview'
+import eventBus from './eventBus.js'
 
 export default {
   name: 'toolbar',
@@ -55,7 +56,8 @@ export default {
   },
   data () {
     return {
-      active: false
+      active: false,
+      newName: ''
     }
   },
   computed: {
@@ -68,8 +70,8 @@ export default {
     currentRank () {
       return this.$store.state.rank
     },
-    checkedBufferLen () {
-      return this.$store.state.checkedBuffer.length
+    checkedBuffer () {
+      return this.$store.state.checkedBuffer
     }
   },
   methods: {
@@ -78,6 +80,13 @@ export default {
     },
     changeRankTo (rank) {
       this.$store.commit('changeRank', {rank})
+    },
+    changeNameHandle () {
+      // console.log(this.checkedBuffer)
+      this.$store.commit('changeName')
+    },
+    renameStart () {
+      eventBus.$emit('rename')
     }
   }
 }

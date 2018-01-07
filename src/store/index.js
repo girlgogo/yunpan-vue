@@ -239,6 +239,35 @@ function nameCanUse (db, id, text) {
   return currentData.every(item => item.name !== text)
 }
 
+// 根据id删除指定数据和其子集
+function deleteItemById (db, id) {
+  if (!id) return false
+  delete db[id]
+  let children = getChildrenById(db, id)
+  console.log(children)
+  if (children.length) {
+    for (let i = 0; i < children.length; i++) {
+      deleteItemById(db, children[i].id)
+    }
+  }
+  return true
+}
+
+// 将选中的元素缓存转成数组
+function getCheckedFileFromBuffer (checkedBuffer) {
+  let data = []
+  for (let key in checkedBuffer) {
+    if (key !== 'length') {
+      const currentItem = checkedBuffer[key]
+      data.push({
+        fileId: key,
+        fileNode: currentItem
+      })
+    }
+  }
+  return data
+}
+
 let store = new Vuex.Store({
   state: {
     data: data,
@@ -339,6 +368,17 @@ let store = new Vuex.Store({
       if (nameCanUse(state.data, payload.id, payload.newName)) {
         state.data[payload.id].name = payload.newName
       }
+    },
+    deleteDate (state) {
+      let data = getCheckedFileFromBuffer(state.checkedBuffer)
+      let len = data.length
+      for (let i = 0; i < len; i++) {
+        const item = data[i]
+        const fileId = item.fileId
+        deleteItemById(state.data, fileId)
+      }
+      state.checkedBuffer = {length: 0}
+      state.checkAll = false
     }
   }
   // ,

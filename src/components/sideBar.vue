@@ -1,6 +1,6 @@
 <template>
-  <div style="border-right: 1px solid #dddee1;display: flex; flex-direction: column; background-color: #fff;">
-    <div style="width: 100%; height: 200px; background-color: #fff; display: flex; flex-direction: column; justify-content: center; align-items: flex-start;">
+  <div style="border-right: 1px solid #dddee1;display: flex; flex-direction: column; background-color: #fff; height: 100%;">
+    <div style="width: 100%; height: 30%; background-color: #fff; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; min-height: 200px;">
       <a href="javascript:;" style="display: block; width: 70px; height: 70px; border-radius: 50%; overflow: hidden; margin-left: 40px;">
         <img src="../assets/head.png" style="width: 100%; height: 100%;">
       </a>
@@ -40,7 +40,7 @@
         音乐
       </MenuItem>
     </Menu>
-    <div style="width: 80%;margin: 100px 0 10px 20px;">
+    <div style="width: 80%;margin: 10px 0 40px 20px;">
       <Progress :percent="20" hide-info></Progress>
       <p>容量：2G / 10G</p>
     </div>
@@ -65,7 +65,6 @@
   width: 240px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   height: 100%;
   border-right: none;
   /* background-color: bisque; */

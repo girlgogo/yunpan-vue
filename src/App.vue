@@ -1,20 +1,18 @@
 <template>
   <div id="app" class="layout">
-    <div>
-      <div class="header"><Htag/></div>
-      <div class="content">
-        <div style="display: flex;width: 100%;justify-content: space-between;">
-          <div>
-            <side-bar/>
+    <div class="header"><Htag/></div>
+    <div class="content">
+      <div style="display: flex;width: 100%; height: 100%;">
+        <div style="height: 100%;">
+          <side-bar/>
+        </div>
+        <div style="flex: 1;background: #fff;">
+          <tool-bar/>
+          <div class="checkAll">
+            <Checkbox size="large" :value="checkAll" @on-change="checkAllHandle">全选</Checkbox>
+            <span>已选中{{checkedLen}}个文件/文件夹</span>
           </div>
-          <div style="flex: 1;background: #fff;">
-            <tool-bar/>
-            <div class="checkAll">
-              <Checkbox size="large" :value="checkAll" @on-change="checkAllHandle">全选</Checkbox>
-              <span>已选中{{checkedLen}}个文件/文件夹</span>
-            </div>
-            <Container/>
-          </div>
+          <Container/>
         </div>
       </div>
     </div>
@@ -70,7 +68,8 @@ body {
   background: #f5f7f9;
   overflow: hidden;
   min-width: 950px;
-  /* position: relative; */
+  height: 100vh;
+  min-height: 826px;
 }
 input {
   outline:none;
@@ -87,13 +86,11 @@ input {
   background: rgb(245, 245, 245);
   padding: 0px;
   border-bottom: 1px solid rgb(230, 231, 236);
+  /* height: 6vh; */
+  min-height: 64px;
+  max-height: 64px;
 }
-/* .content {
-  min-width: 950px;
-  width: 100%;
-  position: absolute;
-  top: 64px;
-  bottom: 0px;
-  left: 0px;
-} */
+.content {
+  height: 94vh;
+}
 </style>

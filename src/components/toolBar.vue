@@ -28,7 +28,7 @@
       </div>
       <div v-else>
         <ButtonGroup size="large" class="btn-grounp" >
-          <Button type="ghost" key="delete">删除</Button>
+          <Button type="ghost" key="delete" @click="modal1 = true">删除</Button>
           <Button type="ghost" key="rename" @click="renameStart">重命名</Button>
           <Button type="ghost" key="moveTo">移动到</Button>
           <Button type="ghost" key="download" disabled>下载</Button>
@@ -37,12 +37,18 @@
       </div>
       <Button class="new-btn" type="primary" icon="plus-round" size="large">新建文件夹</Button>
     </div>
-
+    <Modal
+      v-model="modal1"
+      title="删除文件"
+      @on-ok="ok('删除文件')"
+      @on-cancel="cancel('删除')">
+      <p>确定删除这{{checkedBuffer.length}}个文件/文件夹？</p>
+    </Modal>
   </div>
 </template>
 
 <script>
-import { Col, Button, ButtonGroup, Breadcrumb, BreadcrumbItem } from 'iview'
+import { Col, Button, ButtonGroup, Breadcrumb, BreadcrumbItem, Modal, Message } from 'iview'
 import eventBus from './eventBus.js'
 
 export default {
@@ -52,12 +58,15 @@ export default {
     Button,
     ButtonGroup,
     Breadcrumb,
-    BreadcrumbItem
+    BreadcrumbItem,
+    Modal,
+    Message
   },
   data () {
     return {
       active: false,
-      newName: ''
+      newName: '',
+      modal1: false
     }
   },
   computed: {
@@ -87,6 +96,14 @@ export default {
     },
     renameStart () {
       eventBus.$emit('rename')
+    },
+    ok (message) {
+      this.$store.commit('deleteDate')
+      this.$store.commit('changeCurrentListBuffer')
+      Message.success(message + '成功！')
+    },
+    cancel (message) {
+      Message.info('取消' + message + '文件！')
     }
   }
 }

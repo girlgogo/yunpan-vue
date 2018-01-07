@@ -35,7 +35,7 @@
           <Button type="ghost" key="share" disabled>分享</Button>
         </ButtonGroup>
       </div>
-      <Button class="new-btn" type="primary" icon="plus-round" size="large">新建文件夹</Button>
+      <Button class="new-btn" type="primary" icon="plus-round" size="large" @click="addNewFolder">新建文件夹</Button>
     </div>
     <Modal
       v-model="modal1"
@@ -50,6 +50,7 @@
 <script>
 import { Col, Button, ButtonGroup, Breadcrumb, BreadcrumbItem, Modal, Message } from 'iview'
 import eventBus from './eventBus.js'
+// import { clock } from '../store/data'
 
 export default {
   name: 'toolbar',
@@ -104,6 +105,9 @@ export default {
     },
     cancel (message) {
       Message.info('取消' + message + '文件！')
+    },
+    addNewFolder () {
+      eventBus.$emit('addNewFolderHandle')
     }
   }
 }

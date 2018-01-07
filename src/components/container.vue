@@ -76,6 +76,7 @@
 <script>
 import { Checkbox, Col, Message } from 'iview'
 import eventBus from './eventBus.js'
+import { nameCanUse } from '../store/data'
 
 export default {
   name: 'container',
@@ -103,6 +104,12 @@ export default {
     },
     checkedBuffer () {
       return this.$store.state.checkedBuffer
+    },
+    allData () {
+      return this.$store.state.data
+    },
+    currentListId () {
+      return this.$store.state.currentListId
     }
   },
   methods: {
@@ -122,23 +129,28 @@ export default {
         this.$refs.editInput[0].select()
         return Message.error('文件(夹)名不能为空，请输入文件名称')
       }
-      if (this.newName === this.oldName) {
-        // if(this.newName === '新建文件夹'){
-        //   if(nameCanUse(db, yp.currentListId, newName)){
-        //     dblSetCls(nameText, nameInput, 'show')
-        //     this.onblur = null
-        //     canUseAllBtns(false)
-        //     successFn&&successFn(newName)
-        //     return
-        //   } else {
-        //     this.select()
-        //     return alertMessage('命名冲突', 'error')
-        //   }
-        // }
+      if (this.newName === this.oldName && this.oldName !== '新建文件夹') {
         console.log('changeEdit 1')
         return this.$store.commit('changeEdit', {id})
       }
-      this.$store.commit('changeName', {id, newName: this.newName})
+      if (this.oldName === '新建文件夹') {
+        if (nameCanUse(this.allData, this.currentListId, this.newName)) {
+          this.$store.commit('changeData', {id, newData: this.checkedBuffer[id], newName: this.newName})
+          console.log(id, this.checkedBuffer[id], this.newName)
+          this.$store.commit('changeEdit', {id})
+          return Message.success('新建文件夹成功！')
+        } else {
+          this.$refs.editInput[0].select()
+          return Message.success('命名冲突！')
+        }
+      }
+      if (nameCanUse(this.allData, this.currentListId, this.newName)) {
+        this.$store.commit('changeName', {id, newName: this.newName})
+        Message.success('重命名成功！')
+      } else {
+        this.$refs.editInput[0].select()
+        return Message.success('命名冲突！')
+      }
       this.$store.commit('changeEdit', {id})
     },
     editDoneEnter () {
@@ -162,6 +174,18 @@ export default {
           return item
         }
       })[0]
+      this.newName = this.oldName = this.checkedBuffer[id].name
+      this.cancelRename = false
+      this.$store.commit('changeEdit', {id})
+      this.$nextTick(function () { // input要获取焦点等到DOM渲染完成触发回调函数
+      // console.log(111)
+        this.$refs.editInput[0].focus()
+      })
+    })
+    eventBus.$on('addNewFolderHandle', (e) => {
+      this.$store.commit('changeCheckedAll', {checkedAll: false})
+      let id = Date.now()
+      this.$store.commit('addNewFolder', {id})
       this.newName = this.oldName = this.checkedBuffer[id].name
       this.cancelRename = false
       this.$store.commit('changeEdit', {id})

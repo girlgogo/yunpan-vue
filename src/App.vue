@@ -92,5 +92,6 @@ input {
 }
 .content {
   height: 94vh;
+  min-height: 650px;
 }
 </style>

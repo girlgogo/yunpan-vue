@@ -141,6 +141,9 @@ let store = new Vuex.Store({
       state.checkedBuffer[payload.id] = newData
       state.checkedBuffer.length++
       state.currentListBuffer.push(newData)
+    },
+    moveTarget (state, payload) {
+      state.data[payload.id].pId = payload.targetId
     }
   }
   // ,

@@ -4,7 +4,7 @@
       <li v-for="item in list" :class="['list-item', {'checked': item.checked}]" :key="item.id">
         <div class="list-item-content" >
           <Checkbox size="large" class="checkbox" :value="item.checked" @on-change="checkHandle(item.id)"></Checkbox>
-          <div @click="into(item.id)">
+          <div @click="into(item.id, item.type)">
             <img src="../assets/folder.png" class="big-image" v-if="item.type === 'folder'">
             <img src="../assets/folder_f.png" class="big-image" v-else-if="item.type === 'folder_f'">
             <img src="../assets/folder_m.png" class="small-image" v-else-if="item.type === 'folder_m'">
@@ -43,7 +43,7 @@
             <Checkbox size="large" class="checkbox" :value="item.checked" @on-change="checkHandle(item.id)"></Checkbox>
           </td>
           <td>
-            <div class="file-icon" @click="into(item.id)">
+            <div class="file-icon" @click="into(item.id, item.type)">
               <img src="../assets/folder.png" class="t-big-image" v-if="item.type === 'folder'">
               <img src="../assets/folder_f.png" class="t-big-image" v-else-if="item.type === 'folder_f'">
               <img src="../assets/folder_m.png" class="t-small-image" v-else-if="item.type === 'folder_m'">
@@ -113,7 +113,8 @@ export default {
     }
   },
   methods: {
-    into (id) {
+    into (id, type) {
+      if (type === 'zip') return
       this.$store.commit('changeCurrentListId', {id})
       this.$store.commit('changeCurrentListBuffer')
     },

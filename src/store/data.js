@@ -179,6 +179,10 @@ let data = {
     edit: false
   }
 }
+// 根据id获得当前对象的id
+function getId (db, id) {
+  return db[id]
+}
 
 // 根据id获得所有父级
 function getAllParents (db, id) {
@@ -252,8 +256,8 @@ function getCheckedFileFromBuffer (checkedBuffer) {
     if (key !== 'length') {
       const currentItem = checkedBuffer[key]
       data.push({
-        fileId: key,
-        fileNode: currentItem
+        id: key,
+        fileData: currentItem
       })
     }
   }
@@ -279,4 +283,30 @@ function add0 (n) {
   return n < 10 ? '0' + n : '' + n
 }
 
-export { data, getAllParents, getChildrenById, rankTime, toArr, nameCanUse, deleteItemById, getCheckedFileFromBuffer, clock, add0 }
+// 判断可否移动数据
+function canMoveData (db, currentId, targetId) {
+  const currentData = db[currentId]
+
+  const targetParents = getAllParents(db, targetId)
+  if (currentData.pId === targetId) {
+    return 2 // 移动到自己所在的目录
+  }
+
+  if (targetParents.indexOf(currentData) !== -1) {
+    return 3   // 移动到自己的子集
+  }
+  if (!nameCanUse(db, targetId, currentData.name)) {
+    return 4 // 名字冲突
+  }
+  if (db[targetId].type === 'zip') {
+    return 5 // 压缩文件
+  }
+
+  return 1
+}
+
+function moveDataToTarget (db, currentId, targetId) {
+  db[currentId].pId = targetId
+}
+
+export { data, getId, getAllParents, getChildrenById, rankTime, toArr, nameCanUse, deleteItemById, getCheckedFileFromBuffer, clock, add0, canMoveData, moveDataToTarget }

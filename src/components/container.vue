@@ -1,75 +1,81 @@
 <template>
   <div class="container">
-    <ul id="thumbnail" v-if="currentView === 'thumbnail'">
-      <li v-for="item in list" :class="['list-item', {'checked': item.checked}]" :key="item.id">
-        <div class="list-item-content" >
-          <Checkbox size="large" class="checkbox" :value="item.checked" @on-change="checkHandle(item.id)"></Checkbox>
-          <div @click="into(item.id, item.type)">
-            <img src="../assets/folder.png" class="big-image" v-if="item.type === 'folder'">
-            <img src="../assets/folder_f.png" class="big-image" v-else-if="item.type === 'folder_f'">
-            <img src="../assets/folder_m.png" class="small-image" v-else-if="item.type === 'folder_m'">
-            <img src="../assets/zip.png" class="small-image" v-else-if="item.type === 'zip'">
-            <img src="../assets/image.png" class="big-image" v-else-if="item.type === 'image'">
-            <img src="../assets/music.png" class="big-image" v-else-if="item.type === 'music'">
-          </div>
-          <span class="folder-name" v-if="!item.edit">{{item.name}}</span>
-          <input
-            @blur="editDoneBlur(item.id)"
-            @keydown.13="editDoneEnter"
-            @keydown.esc="cancelEdit"
-            type="text"
-            ref="editInput"
-            v-if="item.edit"
-            class="folder-name-edit"
-            v-model.trim="newName"
-          >
-        </div>
-      </li>
-    </ul>
-    <table id="list" v-else>
-      <thead>
-        <tr>
-          <th>&nbsp</th>
-          <th>名称</th>
-          <th>上次修改时间
-            <!-- <i class="icon-arrow-down"></i> -->
-          </th>
-          <th>大小</th>
-        </tr>
-      </thead>
-      <tbody id="listInfo">
-        <tr v-for="item in list" :key="item.id" :class="{'checked': item.checked}">
-          <td>
+    <div v-if="list.length">
+      <ul id="thumbnail" v-if="currentView === 'thumbnail'">
+        <li v-for="item in list" :class="['list-item', {'checked': item.checked}]" :key="item.id">
+          <div class="list-item-content" >
             <Checkbox size="large" class="checkbox" :value="item.checked" @on-change="checkHandle(item.id)"></Checkbox>
-          </td>
-          <td>
-            <div class="file-icon" @click="into(item.id, item.type)">
-              <img src="../assets/folder.png" class="t-big-image" v-if="item.type === 'folder'">
-              <img src="../assets/folder_f.png" class="t-big-image" v-else-if="item.type === 'folder_f'">
-              <img src="../assets/folder_m.png" class="t-small-image" v-else-if="item.type === 'folder_m'">
-              <img src="../assets/zip.png" class="t-small-image" v-else-if="item.type === 'zip'">
-              <img src="../assets/image.png" class="t-big-image" v-else-if="item.type === 'image'">
-              <img src="../assets/music.png" class="t-big-image" v-else-if="item.type === 'music'">
+            <div @click="into(item.id, item.type)">
+              <img src="../assets/folder.png" class="big-image" v-if="item.type === 'folder'">
+              <img src="../assets/folder_f.png" class="big-image" v-else-if="item.type === 'folder_f'">
+              <img src="../assets/folder_m.png" class="small-image" v-else-if="item.type === 'folder_m'">
+              <img src="../assets/zip.png" class="small-image" v-else-if="item.type === 'zip'">
+              <img src="../assets/image.png" class="big-image" v-else-if="item.type === 'image'">
+              <img src="../assets/music.png" class="big-image" v-else-if="item.type === 'music'">
             </div>
-            <div class="file-name">
-              <span class="name-text" v-if="!item.edit" :value="item.name">{{item.name}}</span>
-              <input
-                @blur="editDoneBlur(item.id)"
-                @keydown.13="editDoneEnter"
-                @keydown.esc="cancelEdit"
-                class="name-input"
-                ref="editInput"
-                v-if="item.edit"
-                type="text"
-                v-model.trim="newName"
-              >
-            </div>
-          </td>
-          <td>{{item.time}}</td>
-          <td>{{item.size}}</td>
-        </tr>
-      </tbody>
-    </table>
+            <span class="folder-name" v-if="!item.edit">{{item.name}}</span>
+            <input
+              @blur="editDoneBlur(item.id)"
+              @keydown.13="editDoneEnter"
+              @keydown.esc="cancelEdit"
+              type="text"
+              ref="editInput"
+              v-if="item.edit"
+              class="folder-name-edit"
+              v-model.trim="newName"
+            >
+          </div>
+        </li>
+      </ul>
+      <table id="list" v-else>
+        <thead>
+          <tr>
+            <th>&nbsp</th>
+            <th>名称</th>
+            <th>上次修改时间
+              <!-- <i class="icon-arrow-down"></i> -->
+            </th>
+            <th>大小</th>
+          </tr>
+        </thead>
+        <tbody id="listInfo">
+          <tr v-for="item in list" :key="item.id" :class="{'checked': item.checked}">
+            <td>
+              <Checkbox size="large" class="checkbox" :value="item.checked" @on-change="checkHandle(item.id)"></Checkbox>
+            </td>
+            <td>
+              <div class="file-icon" @click="into(item.id, item.type)">
+                <img src="../assets/folder.png" class="t-big-image" v-if="item.type === 'folder'">
+                <img src="../assets/folder_f.png" class="t-big-image" v-else-if="item.type === 'folder_f'">
+                <img src="../assets/folder_m.png" class="t-small-image" v-else-if="item.type === 'folder_m'">
+                <img src="../assets/zip.png" class="t-small-image" v-else-if="item.type === 'zip'">
+                <img src="../assets/image.png" class="t-big-image" v-else-if="item.type === 'image'">
+                <img src="../assets/music.png" class="t-big-image" v-else-if="item.type === 'music'">
+              </div>
+              <div class="file-name">
+                <span class="name-text" v-if="!item.edit" :value="item.name">{{item.name}}</span>
+                <input
+                  @blur="editDoneBlur(item.id)"
+                  @keydown.13="editDoneEnter"
+                  @keydown.esc="cancelEdit"
+                  class="name-input"
+                  ref="editInput"
+                  v-if="item.edit"
+                  type="text"
+                  v-model.trim="newName"
+                >
+              </div>
+            </td>
+            <td>{{item.time}}</td>
+            <td>{{item.size}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="kong" v-else>
+      <img src="../assets/暂无消息.png">
+      <p>暂无内容哦～</p>
+    </div>
   </div>
 </template>
 
@@ -114,8 +120,9 @@ export default {
   },
   methods: {
     into (id, type) {
-      if (type === 'zip') return
+      if (type !== 'folder' && type !== 'folder_f' && type !== 'folder_m') return
       this.$store.commit('changeCurrentListId', {id})
+      this.$store.commit('changeCheckedAll', {checkAll: false})
       this.$store.commit('changeCurrentListBuffer')
     },
     checkHandle (id) {
@@ -201,7 +208,8 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
   .container {
-    background-color: #fff
+    background-color: #fff;
+    flex: 1;
   }
   #thumbnail{
     margin: 5px 5px 5px 20px;
@@ -339,5 +347,16 @@ export default {
     border: 1px solid #C8CCD3;
     background: #fff;
     vertical-align: text-bottom;
+  }
+  .kong {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100%;
+  }
+  .kong p {
+    font-size: 24px;
+    color: #bfbfbf;
   }
 </style>

@@ -7,37 +7,37 @@
       <button type="text" class="open-a">开通</button>
       <div style="width: 80%; height: 1px;  background-color: #E8EAEB; margin-left: 20px;"></div>
     </div>
-    <Menu active-name="1" class="sideBar">
+    <Menu active-name="folder" class="sideBar" @on-select="selectHandle">
       <!-- <MenuItem name="0" style="font-size: 15px; height: 100px;" disabled> -->
         <!-- <Avatar size="large" icon="person" style="background-color: rgb(136, 20, 127)"/> -->
       <!-- </MenuItem> -->
-      <MenuItem name="1" style="font-size: 15px;">
+      <MenuItem name="folder" style="font-size: 15px;">
         <Icon type="social-buffer" style="font-size: 22px;margin: 0px 19px 0px 20px;"></Icon>
         全部
       </MenuItem>
-      <MenuItem name="2" style="font-size: 15px;">
+      <MenuItem name="文档" style="font-size: 15px;">
         <Icon type="document-text" style="font-size: 22px;margin: 0px 23px 0px 20px;"></Icon>
         文档
       </MenuItem>
-      <MenuItem name="3" style="font-size: 15px;">
+      <MenuItem name="图片" style="font-size: 15px;">
         <Icon type="image" style="font-size: 20px;margin: 0px 19px 0px 20px;"></Icon>
         图片
       </MenuItem>
-      <MenuItem name="4" style="font-size: 15px;">
+      <MenuItem name="视频" style="font-size: 15px;">
         <Icon type="social-youtube" style="font-size: 20px;margin: 0px 16px 0px 20px;"></Icon>
         视频
       </MenuItem>
-      <MenuItem name="5" style="font-size: 15px;">
+      <MenuItem name="音乐" style="font-size: 15px;">
         <Icon type="music-note" style="font-size: 20px;margin: 0px 20px;"></Icon>
         音乐
       </MenuItem>
-      <MenuItem name="6" style="font-size: 15px;">
+      <MenuItem name="share" style="font-size: 15px;" disabled>
         <Icon type="share" style="font-size: 22px; margin: 0px 17px 0px 20px;"></Icon>
-        视频
+        分享链接
       </MenuItem>
-      <MenuItem name="7" style="font-size: 15px;">
+      <MenuItem name="trash" style="font-size: 15px;" disabled>
         <Icon type="trash-a" style="font-size: 22px;margin: 0px 18px 0px 20px;"></Icon>
-        音乐
+        回收站
       </MenuItem>
     </Menu>
     <div style="width: 80%;margin: 10px 0 40px 20px;">
@@ -56,6 +56,14 @@
       MenuItem,
       Icon,
       Progress
+    },
+    methods: {
+      selectHandle (name) {
+        this.$store.commit('changeMenu', {type: name})
+        this.$store.commit('changeCurrentListId', {id: 0})
+        this.$store.commit('changeCheckedAll', {checkAll: false})
+        this.$store.commit('changeCurrentListBuffer')
+      }
     }
   }
 </script>

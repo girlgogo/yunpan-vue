@@ -1,11 +1,7 @@
 <template>
   <div class="toolBar">
     <div>
-      <Breadcrumb separator=">">
-        <BreadcrumbItem v-for="item in parentList" :key="item.id" to="/">{{item.name}}</BreadcrumbItem>
-        <!-- <BreadcrumbItem to="/components/breadcrumb">Components</BreadcrumbItem>
-        <BreadcrumbItem>Breadcrumb</BreadcrumbItem> -->
-      </Breadcrumb>
+      <Breadcrumb/>
     </div>
     <div class="btn-list">
       <div v-if="checkedBuffer.length === 0">
@@ -55,8 +51,9 @@
 </template>
 
 <script>
-import { Col, Button, ButtonGroup, Breadcrumb, BreadcrumbItem, Modal, Message, Tree } from 'iview'
+import { Col, Button, ButtonGroup, Modal, Message, Tree } from 'iview'
 import eventBus from './eventBus.js'
+import Breadcrumb from './breadcrumb'
 import { getChildrenById, canMoveData, getCheckedFileFromBuffer } from '../store/data'
 
 export default {
@@ -66,7 +63,6 @@ export default {
     Button,
     ButtonGroup,
     Breadcrumb,
-    BreadcrumbItem,
     Modal,
     Message,
     Tree
@@ -81,9 +77,6 @@ export default {
     }
   },
   computed: {
-    parentList () {
-      return this.$store.getters.breakcrumb
-    },
     currentView () {
       return this.$store.state.view
     },
@@ -162,6 +155,7 @@ export default {
     },
     okDelete () {
       this.$store.commit('deleteDate')
+      this.$store.commit('changeCheckedAll', {checkAll: false})
       this.$store.commit('changeCurrentListBuffer')
       Message.success('删除文件成功！')
     },

@@ -15,7 +15,8 @@ let store = new Vuex.Store({
     moveTargetId: 0,
     view: 'thumbnail',
     rank: 'name',
-    checkAll: false
+    checkAll: false,
+    type: 'folder'
   },
   getters: {
     breakcrumb (state) {
@@ -52,7 +53,27 @@ let store = new Vuex.Store({
       state.currentListId = payload.id
     },
     changeCurrentListBuffer (state) {
-      let data = getChildrenById(state.data, state.currentListId)
+      let type = state.type
+      let data = Object.values(state.data)
+      if (type === 'folder') {
+        data = getChildrenById(state.data, state.currentListId)
+      } else if (type === '文档') {
+        data = data.filter(item => {
+          return item.type === 'text'
+        })
+      } else if (type === '图片') {
+        data = data.filter(item => {
+          return item.type === 'image'
+        })
+      } else if (type === '视频') {
+        data = data.filter(item => {
+          return item.type === 'vadio'
+        })
+      } else if (type === '音乐') {
+        data = data.filter(item => {
+          return item.type === 'music'
+        })
+      }
       state.currentListBuffer = data
     },
     changeChecked (state, payload) {
@@ -120,11 +141,9 @@ let store = new Vuex.Store({
       let len = data.length
       for (let i = 0; i < len; i++) {
         const item = data[i]
-        const fileId = item.fileId
+        const fileId = item.id
         deleteItemById(state.data, fileId)
       }
-      state.checkedBuffer = {length: 0}
-      state.checkAll = false
     },
     addNewFolder (state, payload) {
       let newData = {
@@ -144,6 +163,9 @@ let store = new Vuex.Store({
     },
     moveTarget (state, payload) {
       state.data[payload.id].pId = payload.targetId
+    },
+    changeMenu (state, payload) {
+      state.type = payload.type
     }
   }
   // ,

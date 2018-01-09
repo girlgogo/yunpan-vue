@@ -6,7 +6,7 @@
         <div style="height: 100%;">
           <side-bar/>
         </div>
-        <div style="flex: 1;background: #fff;">
+        <div style="flex: 1; background: #fff; display: flex; flex-direction: column;">
           <tool-bar/>
           <div class="checkAll">
             <Checkbox size="large" :value="checkAll" @on-change="checkAllHandle">全选</Checkbox>
@@ -20,10 +20,10 @@
 </template>
 
 <script>
-import ToolBar from './components/toolBar'
-import SideBar from './components/sideBar'
-import Container from './components/container'
-import Htag from './components/header'
+import ToolBar from '@/components/toolBar'
+import SideBar from '@/components/sideBar'
+import Htag from '@/components/header'
+import Container from '@/components/container'
 import { Layout, Header, Row, Checkbox } from 'iview'
 
 export default {
@@ -31,9 +31,9 @@ export default {
   components: {
     Layout,
     Header,
+    Container,
     ToolBar,
     SideBar,
-    Container,
     Htag,
     Row,
     Checkbox
@@ -52,6 +52,7 @@ export default {
     }
   },
   created () {
+    // console.log(this.$route.params)
     this.$store.commit('changeCurrentListBuffer')
   }
 }

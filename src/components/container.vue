@@ -1,8 +1,8 @@
 <template>
-  <div class="container">
+  <div class="container" @click.left.self="contextMenuclose" @click.right.prevent="contextMenu1Handle">
     <div v-if="list.length">
-      <ul id="thumbnail" v-if="currentView === 'thumbnail'">
-        <li v-for="item in list" :class="['list-item', {'checked': item.checked}]" :key="item.id">
+      <ul id="thumbnail" v-if="view === 'thumbnail'">
+        <li v-for="item in list" :class="['list-item', {'checked': item.checked}]" :key="item.id" @click.right.stop.prevent="contextMenu2Handle($event, item.id)">
           <div class="list-item-content" >
             <Checkbox size="large" class="checkbox" :value="item.checked" @on-change="checkHandle(item.id)"></Checkbox>
             <div @click="into(item.id, item.type)">
@@ -39,7 +39,7 @@
           </tr>
         </thead>
         <tbody id="listInfo">
-          <tr v-for="item in list" :key="item.id" :class="{'checked': item.checked}">
+          <tr v-for="item in list" :key="item.id" :class="{'checked': item.checked}" @click.right.stop.prevent="contextMenu2Handle($event, item.id)">
             <td>
               <Checkbox size="large" class="checkbox" :value="item.checked" @on-change="checkHandle(item.id)"></Checkbox>
             </td>
@@ -76,47 +76,86 @@
       <img src="../assets/暂无消息.png">
       <p>暂无内容哦～</p>
     </div>
+    <Menu theme="light" class="contextMenu" :style="{left: contextMenuLeft, top: contextMenuTop}" accordion active-name="2-2" :open-names="['1']" v-if="contextMenu1" @on-select.self="rightHandle1">
+      <MenuItem name="1">刷新</MenuItem>
+      <Submenu name="2">
+        <template slot="title">
+          视图
+        </template>
+        <MenuItem name="2-1">
+         <Icon type="checkmark" :color="view === 'list' ? '#0097EB' : 'rgba(255,255,255,0)'"></Icon>
+         <span :style="{color: view === 'list' ? '#0097EB' : '#495060'}">列表</span>
+        </MenuItem>
+        <MenuItem name="2-2">
+          <Icon type="checkmark" :color="view === 'thumbnail' ? '#0097EB' : 'rgba(255,255,255,0)'"></Icon>
+          <span :style="{color: view === 'thumbnail' ? '#0097EB' : '#495060'}">缩略图</span>
+        </MenuItem>
+      </Submenu>
+      <Submenu name="3">
+        <template slot="title">
+          排序
+        </template>
+        <MenuItem name="3-1">
+          <Icon type="checkmark" :color="rank === 'name' ? '#0097EB' : 'rgba(255,255,255,0)'"></Icon>
+          <span :style="{color: rank === 'name' ? '#0097EB' : '#495060'}">字母</span>
+        </MenuItem>
+        <MenuItem name="3-2">
+          <Icon type="checkmark" :color="rank === 'time' ? '#0097EB' : 'rgba(255,255,255,0)'"></Icon>
+          <span :style="{color: rank === 'time' ? '#0097EB' : '#495060'}">时间</span>
+        </MenuItem>
+      </Submenu>
+      <MenuItem name="4">新建文件夹</MenuItem>
+    </Menu>
+    <Menu theme="light" class="contextMenu" :style="{left: contextMenuLeft, top: contextMenuTop}" v-if="contextMenu2" @on-select.self="rightHandle2">
+      <MenuItem name="1" disabled>下载</MenuItem>
+      <MenuItem name="2" disabled>分享</MenuItem>
+      <MenuItem name="3">移动到</MenuItem>
+      <MenuItem name="4">重命名</MenuItem>
+      <MenuItem name="5">删除</MenuItem>
+    </Menu>
   </div>
 </template>
 
 <script>
-import { Checkbox, Col, Message } from 'iview'
+import { Checkbox, Col, Message, Menu, Submenu, MenuItem, MenuGroup, Icon } from 'iview'
 import eventBus from './eventBus.js'
 import { nameCanUse } from '../store/data'
+import { mapState, mapGetters } from 'vuex'
 
 export default {
   name: 'container',
   components: {
     Checkbox,
     Col,
-    Message
+    Message,
+    Menu,
+    Submenu,
+    MenuItem,
+    MenuGroup,
+    Icon
   },
   data () {
     return {
       newName: '',
       oldName: '',
-      cancelRename: false
+      cancelRename: false,
+      contextMenu1: false,
+      contextMenu2: false,
+      contextMenuLeft: '0px',
+      contextMenuTop: '0px'
     }
   },
   computed: {
-    list () {
-      return this.$store.getters.currentListBufferR
-    },
-    currentView () {
-      return this.$store.state.view
-    },
-    currentRank () {
-      return this.$store.state.rank
-    },
-    checkedBuffer () {
-      return this.$store.state.checkedBuffer
-    },
-    allData () {
-      return this.$store.state.data
-    },
-    currentListId () {
-      return this.$store.state.currentListId
-    }
+    ...mapGetters({
+      list: 'currentListBufferR'
+    }),
+    ...mapState([
+      'view',
+      'rank',
+      'checkedBuffer',
+      'data',
+      'currentListId'
+    ])
   },
   methods: {
     into (id, type) {
@@ -129,7 +168,6 @@ export default {
       this.$store.commit('changeChecked', {id})
     },
     editDoneBlur (id) {
-      console.log(this.newName)
       if (this.cancelRename) {
         return this.$store.commit('changeEdit', {id})
       }
@@ -138,13 +176,11 @@ export default {
         return Message.error('文件(夹)名不能为空，请输入文件名称')
       }
       if (this.newName === this.oldName && this.oldName !== '新建文件夹') {
-        console.log('changeEdit 1')
         return this.$store.commit('changeEdit', {id})
       }
       if (this.oldName === '新建文件夹') {
-        if (nameCanUse(this.allData, this.currentListId, this.newName)) {
+        if (nameCanUse(this.data, this.currentListId, this.newName)) {
           this.$store.commit('changeData', {id, newData: this.checkedBuffer[id], newName: this.newName})
-          console.log(id, this.checkedBuffer[id], this.newName)
           this.$store.commit('changeEdit', {id})
           return Message.success('新建文件夹成功！')
         } else {
@@ -152,7 +188,7 @@ export default {
           return Message.success('命名冲突！')
         }
       }
-      if (nameCanUse(this.allData, this.currentListId, this.newName)) {
+      if (nameCanUse(this.data, this.currentListId, this.newName)) {
         this.$store.commit('changeName', {id, newName: this.newName})
         Message.success('重命名成功！')
       } else {
@@ -167,6 +203,98 @@ export default {
     cancelEdit () {
       this.cancelRename = true
       this.$refs.editInput[0].blur()
+    },
+    contextMenuclose () {
+      if (this.contextMenu1 === true) {
+        this.contextMenu1 = false
+      }
+      if (this.contextMenu2 === true) {
+        this.contextMenu2 = false
+      }
+    },
+    contextMenu1Handle (e) {
+      console.log('五点')
+      this.contextMenu1 = true
+      let left = e.pageX
+      let top = e.pageY
+      let screenWidth = window.innerWidth
+      let screenHeight = window.innerHeight
+      if (left + 240 >= screenWidth) {
+        left = screenWidth - 240
+      }
+      if (top < e.target.offsetTop) {
+        top = e.target.offsetTop
+      }
+      if (top + 296 >= screenHeight) {
+        top = screenHeight - 296
+      }
+      this.contextMenuLeft = left + 'px'
+      this.contextMenuTop = top + 'px'
+    },
+    rightHandle1 (name) {
+      this.contextMenu1 = false
+      if (name === '1') return
+      if (name === '2-1') {
+        this.$store.commit('changeView', {view: 'list'})
+      }
+      if (name === '2-2') {
+        this.$store.commit('changeView', {view: 'thumbnail'})
+      }
+      if (name === '3-1') {
+        this.$store.commit('changeRank', {rank: 'name'})
+      }
+      if (name === '3-2') {
+        this.$store.commit('changeRank', {rank: 'time'})
+      }
+      if (name === '4') {
+        this.$store.commit('changeCheckedAll', {checkedAll: false})
+        let id = Date.now()
+        this.$store.commit('addNewFolder', {id})
+        this.newName = this.oldName = this.checkedBuffer[id].name
+        this.cancelRename = false
+        this.$store.commit('changeEdit', {id})
+        this.$nextTick(function () { // input要获取焦点等到DOM渲染完成触发回调函数
+          this.$refs.editInput[0].focus()
+        })
+      }
+    },
+    contextMenu2Handle (e, id) {
+      let targetInBuffer = Object.keys(this.checkedBuffer).some((item) => {
+        return item * 1 === id
+      })
+      if (!targetInBuffer) {
+        this.$store.commit('changeCheckedAll', {checkAll: false})
+        this.$store.commit('changeChecked', {id})
+      }
+      this.contextMenu2 = true
+      let left = e.pageX
+      let top = e.pageY
+      let screenWidth = window.innerWidth
+      let screenHeight = window.innerHeight
+      if (left + 240 >= screenWidth) {
+        left = screenWidth - 240
+      }
+      if (top < e.target.offsetTop) {
+        top = e.target.offsetTop
+      }
+      if (top + 296 >= screenHeight) {
+        top = screenHeight - 296
+      }
+      this.contextMenuLeft = left + 'px'
+      this.contextMenuTop = top + 'px'
+    },
+    rightHandle2 (name) {
+      console.log(name)
+      this.contextMenu2 = false
+      if (name === '3') {
+        eventBus.$emit('moveFolderTo')
+      }
+      if (name === '4') {
+        eventBus.$emit('rename')
+      }
+      if (name === '5') {
+        eventBus.$emit('deleteFolder')
+      }
     }
   },
   mounted () {
@@ -358,5 +486,14 @@ export default {
   .kong p {
     font-size: 24px;
     color: #bfbfbf;
+  }
+  .contextMenu {
+    border-right: none;
+    border: 1px solid rgb(221, 222, 225);
+    border-radius: 5px;
+    box-shadow: 2px 2px 10px 2px rgb(221, 222, 225);
+    position: absolute;
+    left: 0px;
+    top: 0px;
   }
 </style>

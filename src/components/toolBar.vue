@@ -6,18 +6,18 @@
     <div class="btn-list">
       <div v-if="checkedBuffer.length === 0">
         <ButtonGroup size="large" class="btn-grounp" >
-          <Button type="ghost" @click="changeViewTo('list')" :class="currentView === 'list'? 'btn-active': ''" key="list">
+          <Button type="ghost" @click="changeViewTo('list')" :class="view === 'list'? 'btn-active': ''" key="list">
             <img src="../assets/list.png" class="btn-img" />
           </Button>
-          <Button type="ghost" @click="changeViewTo('thumbnail')" :class="currentView === 'thumbnail'? 'btn-active': ''" key="thumbnail">
+          <Button type="ghost" @click="changeViewTo('thumbnail')" :class="view === 'thumbnail'? 'btn-active': ''" key="thumbnail">
             <img src="../assets/big.png" class="btn-img" />
           </Button>
         </ButtonGroup>
         <ButtonGroup size="large" class="btn-grounp" >
-          <Button type="ghost" @click="changeRankTo('name')" :class="currentRank === 'name'? 'btn-active': ''" key="name">
+          <Button type="ghost" @click="changeRankTo('name')" :class="rank === 'name'? 'btn-active': ''" key="name">
             <img src="../assets/sort.png" class="btn-img" />
           </Button>
-          <Button type="ghost" @click="changeRankTo('time')" :class="currentRank === 'time'? 'btn-active': ''" key="time">
+          <Button type="ghost" @click="changeRankTo('time')" :class="rank === 'time'? 'btn-active': ''" key="time">
             <img src="../assets/time.png" class="btn-img" />
           </Button>
         </ButtonGroup>
@@ -55,6 +55,7 @@ import { Col, Button, ButtonGroup, Modal, Message, Tree } from 'iview'
 import eventBus from './eventBus.js'
 import Breadcrumb from './breadcrumb'
 import { getChildrenById, canMoveData, getCheckedFileFromBuffer } from '../store/data'
+import { mapState } from 'vuex'
 
 export default {
   name: 'toolbar',
@@ -77,15 +78,12 @@ export default {
     }
   },
   computed: {
-    currentView () {
-      return this.$store.state.view
-    },
-    currentRank () {
-      return this.$store.state.rank
-    },
-    checkedBuffer () {
-      return this.$store.state.checkedBuffer
-    },
+    ...mapState({
+      view: 'view',
+      rank: 'rank',
+      checkedBuffer: 'checkedBuffer',
+      allData: 'data'
+    }),
     moveToData () {
       let data = this.$store.state.data
       let dataNew = []
@@ -134,9 +132,6 @@ export default {
 
       console.log(dataNew)
       return dataNew
-    },
-    allData () {
-      return this.$store.state.data
     }
   },
   methods: {
@@ -145,10 +140,6 @@ export default {
     },
     changeRankTo (rank) {
       this.$store.commit('changeRank', {rank})
-    },
-    changeNameHandle () {
-      // console.log(this.checkedBuffer)
-      this.$store.commit('changeName')
     },
     renameStart () {
       eventBus.$emit('rename')
@@ -164,9 +155,6 @@ export default {
     },
     addNewFolder () {
       eventBus.$emit('addNewFolderHandle')
-    },
-    moveTo () {
-      console.log(123)
     },
     okMove () {
       let data = getCheckedFileFromBuffer(this.checkedBuffer)
@@ -232,6 +220,14 @@ export default {
         ])
       ])
     }
+  },
+  mounted () {
+    eventBus.$on('moveFolderTo', () => {
+      this.modal2 = true
+    })
+    eventBus.$on('deleteFolder', () => {
+      this.modal1 = true
+    })
   }
 }
 </script>

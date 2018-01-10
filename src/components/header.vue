@@ -20,7 +20,7 @@
                 <button type="text" class="open">开通</button>
               </div>
             </DropdownItem>
-            <DropdownItem class="list-item">开启每日极速上网</DropdownItem>
+            <DropdownItem class="list-item">开启每日极速上传</DropdownItem>
             <DropdownItem class="list-item">帮组与反馈</DropdownItem>
             <DropdownItem class="list-item">安全与隐私</DropdownItem>
             <DropdownItem class="list-item">退出登录</DropdownItem>

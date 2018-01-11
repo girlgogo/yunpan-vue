@@ -314,7 +314,6 @@ export default {
       this.cancelRename = false
       this.$store.commit('changeEdit', {id})
       this.$nextTick(function () { // input要获取焦点等到DOM渲染完成触发回调函数
-      // console.log(111)
         this.$refs.editInput[0].focus()
       })
     })
@@ -350,6 +349,7 @@ export default {
     height: 130px;
     padding: 5px;
     margin: 5px;
+    color: #020202;
   }
   #thumbnail .list-item.checked {
     background-color: #f1f5fa;
@@ -396,6 +396,7 @@ export default {
   #list {
     width: 100%;
     border-collapse: collapse;
+    color: #020202;
   }
   #list thead {
     margin: 10px 60px 10px 20px;

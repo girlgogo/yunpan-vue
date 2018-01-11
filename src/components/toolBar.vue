@@ -24,14 +24,14 @@
       </div>
       <div v-else>
         <ButtonGroup size="large" class="btn-grounp" >
-          <Button type="ghost" key="delete" @click="modal1 = true">删除</Button>
-          <Button type="ghost" key="rename" @click="renameStart">重命名</Button>
-          <Button type="ghost" key="moveTo" @click="modal2 = true">移动到</Button>
-          <Button type="ghost" key="download" disabled>下载</Button>
-          <Button type="ghost" key="share" disabled>分享</Button>
+          <Button type="ghost" class="btn-item" key="delete" @click="modal1 = true">删除</Button>
+          <Button type="ghost" class="btn-item" key="rename" @click="renameStart">重命名</Button>
+          <Button type="ghost" class="btn-item" key="moveTo" @click="modal2 = true">移动到</Button>
+          <Button type="ghost" class="btn-item" key="download" disabled>下载</Button>
+          <Button type="ghost" class="btn-item" key="share" disabled>分享</Button>
         </ButtonGroup>
       </div>
-      <Button class="new-btn" type="primary" icon="plus-round" size="large" @click="addNewFolder">新建文件夹</Button>
+      <Button style="background-color: #1296db;border: none;border-radius: 2px;font-size: 16px;font-weight: bold;" type="primary" icon="plus-round" size="large" @click="addNewFolder">新建文件夹</Button>
     </div>
     <Modal
       v-model="modal1"
@@ -45,7 +45,7 @@
       title="移动文件/文件夹到"
       @on-ok="okMove"
       @on-cancel="cancelMove">
-      <Tree :data="moveToData" :render="renderContent"></Tree>
+      <Tree :data="moveToData" style="color: #020202;" :render="renderContent"></Tree>
     </Modal>
   </div>
 </template>
@@ -233,12 +233,6 @@ export default {
 </script>
 
 <style>
-.new-btn {
-  background-color: #1296db;
-  border: none;
-  border-radius: 2px;
-  font-size: 16px;
-}
 .toolBar {
   display: flex;
   justify-content: space-between;
@@ -253,17 +247,20 @@ export default {
 }
 .btn-grounp {
   margin-right: 20px;
-  vertical-align: top;
+  vertical-align: top !important;
 }
 .btn-img {
   width: 16px;
   margin-bottom: -2px;
 }
 .btn-active {
-  background-color: #E6E7EC;
+  background-color: #E6E7EC !important;
   pointer-events: none;
 }
 .activeTree {
   background-color: antiquewhite;
+}
+.btn-item {
+  font-weight: 500;
 }
 </style>

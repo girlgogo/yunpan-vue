@@ -9,13 +9,13 @@
     <div class="user">
       <Dropdown style="margin-left: 20px;" placement="bottom-end">
         <a href="javascript:void(0)">
-          <span style="color: rgb(0, 0, 0); margin: 0px 10px; font-size: 14px">summer</span>
+          <span class="user-name">summer</span>
           <Icon type="arrow-down-b"></Icon>
         </a>
         <DropdownMenu slot="list" style="width: 250px;">
             <DropdownItem class="list-item active" disabled>
               <div>
-                <img src="../assets/vip.png" style="height: 15px;margin-bottom: -3px;">
+                <img src="../assets/vip.png" class="vip">
                 超级会员专享4T容量
                 <button type="text" class="open">开通</button>
               </div>
@@ -44,7 +44,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .head {
   width: 100%;
   height: 64px;
@@ -76,7 +76,6 @@ export default {
   margin: 20px 50px;
 }
 .head .list-item {
-  /* text-align: left; */
   font-size: 18px;
   color: #000;
   line-height: 25px;
@@ -94,6 +93,15 @@ export default {
   border: none;
   color: #fff;
   margin-left: 8px;
+}
+.user-name {
+  color: rgb(0, 0, 0);
+  margin: 0px 10px;
+  font-size: 14px
+}
+.vip {
+  height: 15px;
+  margin-bottom: -3px;
 }
 </style>
 

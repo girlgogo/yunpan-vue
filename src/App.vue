@@ -52,7 +52,6 @@ export default {
     }
   },
   created () {
-    // console.log(this.$route.params)
     this.$store.commit('changeCurrentListBuffer')
   }
 }
@@ -60,7 +59,7 @@ export default {
 
 <style>
 body {
-  font: 14px/1.5 -apple-system,BlinkSystemFont,"Segoe UI",Roboto,Ubuntu,"Helvetica Neue",Helevetica,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei UI","Microsoft YaHei","Source Han Sans CN",sans-serif;
+  font: 14px/1.5 -apple-system,BlinkSystemFont,"Segoe UI",Roboto,Ubuntu,"Helvetica Neue",Helevetica,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei UI","Microsoft YaHei","Source Han Sans CN",sans-serif !important;
   -webkit-font-smoothing: subpixel-antialiased;
   color: #020202;
   outline: 0;
@@ -71,11 +70,13 @@ body {
   min-width: 950px;
   height: 100vh;
   min-height: 826px;
+  font-size: 14px;
 }
 input {
   outline:none;
 }
 .checkAll {
+  color: #020202;
   text-align: left;
   width: 100%;
   height: 40px;

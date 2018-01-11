@@ -40,6 +40,7 @@ export default {
     line-height: 40px;
     margin: 10px;
     text-align: center;
+    font-size: 14px;
   }
   .breadcrumb li {
     display: inline-block;
@@ -55,9 +56,6 @@ export default {
   }
   .icon-break-next {
     margin: 0 10px;
-    vertical-align: text-top;
-    /* width: 8px;
-    height: 17px;
-    line-height: 15px; */
+    vertical-align: text-bottom;
   }
 </style>

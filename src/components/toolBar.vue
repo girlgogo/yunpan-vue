@@ -31,7 +31,7 @@
           <Button type="ghost" class="btn-item" key="share" disabled>分享</Button>
         </ButtonGroup>
       </div>
-      <Button style="background-color: #1296db;border: none;border-radius: 2px;font-size: 16px;font-weight: bold;" type="primary" icon="plus-round" size="large" @click="addNewFolder">新建文件夹</Button>
+      <Button style="background-color: #1296db;border: none;border-radius: 2px;font-size: 16px;font-weight: bold;" type="primary" icon="plus-round" size="large" @click="addNewFolder" >新建文件夹</Button>
     </div>
     <Modal
       v-model="modal1"
@@ -82,7 +82,8 @@ export default {
       view: 'view',
       rank: 'rank',
       checkedBuffer: 'checkedBuffer',
-      allData: 'data'
+      allData: 'data',
+      type: 'type'
     }),
     moveToData () {
       let data = this.$store.state.data
@@ -154,6 +155,11 @@ export default {
       Message.info('取消删除文件！')
     },
     addNewFolder () {
+      if (this.type !== 'folder') {
+        this.$store.commit('changeCheckedAll', {checkAll: false})
+        this.$store.commit('changeMenu', {type: 'folder'})
+        this.$store.commit('changeCurrentListBuffer')
+      }
       eventBus.$emit('addNewFolderHandle')
     },
     okMove () {

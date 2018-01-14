@@ -116,6 +116,7 @@
   border: 1px solid #1296db;
   color: #1296db;
   font-weight: 500;
+  background-color: #fff;
 }
 
 .ivu-menu-vertical.ivu-menu-light:after {

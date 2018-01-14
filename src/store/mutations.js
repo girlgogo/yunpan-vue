@@ -118,7 +118,6 @@ let Mutations = {
       checked: true,
       edit: false
     }
-    console.log(newData)
     state.checkedBuffer[payload.id] = newData
     state.checkedBuffer.length++
     state.currentListBuffer.push(newData)

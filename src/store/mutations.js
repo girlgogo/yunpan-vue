@@ -30,7 +30,7 @@ let Mutations = {
       })
     } else if (type === '视频') {
       data = data.filter(item => {
-        return item.type === 'vadio'
+        return item.type === 'video'
       })
     } else if (type === '音乐') {
       data = data.filter(item => {

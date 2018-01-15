@@ -10,8 +10,9 @@
               <img src="../assets/folder_f.png" class="big-image" v-else-if="item.type === 'folder_f'">
               <img src="../assets/folder_m.png" class="small-image" v-else-if="item.type === 'folder_m'">
               <img src="../assets/zip.png" class="small-image" v-else-if="item.type === 'zip'">
-              <img src="../assets/image.png" class="big-image" v-else-if="item.type === 'image'">
+              <img :src="item.src" class="auto-image" v-else-if="item.type === 'image'">
               <img src="../assets/music.png" class="big-image" v-else-if="item.type === 'music'">
+              <img src="../assets/video.png" class="small-image" v-else-if="item.type === 'video'">
             </div>
             <span class="folder-name" v-if="!item.edit">{{item.name}}</span>
             <input
@@ -49,8 +50,9 @@
                 <img src="../assets/folder_f.png" class="t-big-image" v-else-if="item.type === 'folder_f'">
                 <img src="../assets/folder_m.png" class="t-small-image" v-else-if="item.type === 'folder_m'">
                 <img src="../assets/zip.png" class="t-small-image" v-else-if="item.type === 'zip'">
-                <img src="../assets/image.png" class="t-big-image" v-else-if="item.type === 'image'">
+                <img :src="item.src" class="t-auto-image" v-else-if="item.type === 'image'">
                 <img src="../assets/music.png" class="t-big-image" v-else-if="item.type === 'music'">
+                <img src="../assets/video.png" class="t-small-image" v-else-if="item.type === 'video'">
               </div>
               <div class="file-name">
                 <span class="name-text" v-if="!item.edit" :value="item.name">{{item.name}}</span>
@@ -113,11 +115,24 @@
       <MenuItem name="4">重命名</MenuItem>
       <MenuItem name="5">删除</MenuItem>
     </Menu>
+    <Modal
+      v-model="modal3"
+      title="视频预览"
+      class-name="vertical-center-modal"
+      width=830
+      :mask-closable="false"
+      @on-ok="closeModal"
+      @on-cancel="closeModal">
+      <video id="video1" width="800" height="500" controls ref="myVideo">
+        <source src="https://static.smartisanos.cn/common/video/smartisan-jianguopro2.mp4" type="video/mp4">
+        您的浏览器不支持 HTML5 video 标签。
+      </video>
+    </Modal>
   </div>
 </template>
 
 <script>
-import { Checkbox, Col, Message, Menu, Submenu, MenuItem, MenuGroup, Icon } from 'iview'
+import { Checkbox, Col, Message, Menu, Submenu, MenuItem, MenuGroup, Icon, Modal } from 'iview'
 import eventBus from './eventBus.js'
 import { nameCanUse } from '../store/data'
 import { mapState, mapGetters } from 'vuex'
@@ -132,7 +147,8 @@ export default {
     Submenu,
     MenuItem,
     MenuGroup,
-    Icon
+    Icon,
+    Modal
   },
   data () {
     return {
@@ -142,7 +158,8 @@ export default {
       contextMenu1: false,
       contextMenu2: false,
       contextMenuLeft: '0px',
-      contextMenuTop: '0px'
+      contextMenuTop: '0px',
+      modal3: false
     }
   },
   computed: {
@@ -159,6 +176,15 @@ export default {
   },
   methods: {
     into (id, type) {
+      if (type === 'video') {
+        this.modal3 = true
+      }
+      if (type === 'music') {
+        return Message.error('此文件类型不能预览，建议下载后打开！')
+      }
+      // if (type === 'image') {
+      //   this.imagePreview = true
+      // }
       if (type !== 'folder' && type !== 'folder_f' && type !== 'folder_m') return
       this.$store.commit('changeCurrentListId', {id})
       this.$store.commit('changeCheckedAll', {checkAll: false})
@@ -185,7 +211,7 @@ export default {
           return Message.success('新建文件夹成功！')
         } else {
           this.$refs.editInput[0].select()
-          return Message.success('命名冲突！')
+          return Message.error('命名冲突！')
         }
       }
       if (nameCanUse(this.data, this.currentListId, this.newName)) {
@@ -193,7 +219,7 @@ export default {
         Message.success('重命名成功！')
       } else {
         this.$refs.editInput[0].select()
-        return Message.success('命名冲突！')
+        return Message.error('命名冲突！')
       }
       this.$store.commit('changeEdit', {id})
     },
@@ -295,6 +321,10 @@ export default {
       if (name === '5') {
         eventBus.$emit('deleteFolder')
       }
+    },
+    closeModal () {
+      this.$refs.myVideo.pause()
+      this.modal3 = false
     }
   },
   mounted () {
@@ -332,7 +362,6 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
   .container {
     background-color: #fff;
@@ -388,6 +417,10 @@ export default {
   .small-image {
     width: 50px;
     margin: 5px;
+  }
+  .auto-image {
+    max-width: 80px;
+    max-height: 60px;
   }
   #thumbnail .checkbox {
     visibility: hidden;
@@ -451,6 +484,11 @@ export default {
     height: 26px;
     margin-bottom: -5px;
   }
+  .t-auto-image {
+    width: 26px;
+    height: 26px;
+    margin-bottom: -5px;
+  }
   #list .file-icon {
     display: inline-block;
     width: 40px;
@@ -496,5 +534,75 @@ export default {
     position: absolute;
     left: 0px;
     top: 0px;
+  }
+  .vertical-center-modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .vertical-center-modal .ivu-modal{
+    top: 0;
+  }
+  .shade {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 1000;
+    background-color: rgba(0,0,0,.80);
+  }
+  .img-header {
+    width: 100%;
+    height: 64px;
+    background-color: #181818;
+    font-size: 18px;
+    color: #fff;
+  }
+  .img-header span {
+    display: inline-block;
+    height: 40px;
+    line-height: 40px;
+    margin: 12px 40px;
+  }
+  .img-header .img-close {
+    float: right;
+    margin: 0 40px;
+    width: 64px;
+    height: 64px;
+    color: #fff;
+    border: none;
+    background-color: #181818;
+  }
+  .img-header .img-close:hover {
+    background-color: rgba(255,255,255,.2);
+  }
+  .swiper-container {
+    position: absolute;
+    width: 70%;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 64px;
+    bottom: 0px;
+    background-color: #fff;
+    margin: 0 auto;
+  }
+  .swiper-btn-prev, .swiper-btn-next {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    top: 50%;
+    color: #fff;
+    border: none;
+    background-color: rgba(0,0,0,0);
+  }
+  .swiper-btn-prev:hover, .swiper-btn-next:hover {
+    background-color: rgba(255,255,255,.2);
+  }
+  .swiper-btn-prev {
+    left: 80px;
+  }
+  .swiper-btn-next {
+    right: 80px;
   }
 </style>

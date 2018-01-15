@@ -1,0 +1,31 @@
+{
+  "apps": [
+    {
+      "name": "yunpan",
+      "script": "server/app.js",
+      "env": {
+        "COMMON_VARIABLE": true
+      },
+      "env_production": {
+        "NODE_ENV": "production",
+        "port": "9001"
+      },
+      "instances": 3
+    }
+  ],
+  "deploy": {
+    "production": {
+      "user": "emily",
+      "host": ["47.93.14.9"],
+      "port": "2012",
+      "ref": "origin/master",
+      "repo": "https://github.com/girlgogo/yunpan-vue",
+      "path": "/www/yunpan.yixiaoli.cn",
+      "ssh_options": "StrictHostKeyChecking=no",
+      "post-deploy": "npm install --registry=https://registry.npm.taobao.org && npm run build && pm2 startOrRestart ecosystem.json --env production",
+      "env": {
+        "NODE_ENV": "production"
+      }
+    }
+  }
+}

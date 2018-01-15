@@ -36,6 +36,7 @@
     <Modal
       v-model="modal1"
       title="删除文件"
+      class-name="vertical-center-modal"
       @on-ok="okDelete"
       @on-cancel="cancelDelete">
       <p>确定删除这{{checkedBuffer.length}}个文件/文件夹？</p>
@@ -43,6 +44,7 @@
     <Modal
       v-model="modal2"
       title="移动文件/文件夹到"
+      class-name="vertical-center-modal"
       @on-ok="okMove"
       @on-cancel="cancelMove">
       <Tree :data="moveToData" style="color: #020202;" :render="renderContent"></Tree>
@@ -268,5 +270,13 @@ export default {
 }
 .btn-item {
   font-weight: 500;
+}
+.vertical-center-modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.vertical-center-modal .ivu-modal{
+  top: 0;
 }
 </style>

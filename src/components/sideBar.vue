@@ -7,7 +7,7 @@
       <button type="text" class="open-a">开通</button>
       <div class="bottom-line"></div>
     </div>
-    <Menu active-name="folder" class="sideBar" @on-select="selectHandle">
+    <Menu :active-name="type" class="sideBar" @on-select="selectHandle">
       <MenuItem name="folder" style="font-size: 15px;font-weight: 500;">
         <Icon type="social-buffer" style="font-size: 22px;margin: 0px 19px 0px 20px;"></Icon>
         全部
@@ -46,6 +46,7 @@
 
 <script>
   import { Menu, MenuItem, Icon, Progress } from 'iview'
+  import { mapState } from 'vuex'
 
   export default {
     components: {
@@ -53,6 +54,11 @@
       MenuItem,
       Icon,
       Progress
+    },
+    computed: {
+      ...mapState([
+        'type'
+      ])
     },
     methods: {
       selectHandle (name) {
